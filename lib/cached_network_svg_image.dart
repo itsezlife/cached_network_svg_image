@@ -27,7 +27,6 @@ class CachedNetworkSVGImage extends StatefulWidget {
     String? semanticsLabel,
     bool excludeFromSemantics = false,
     SvgTheme theme = const SvgTheme(),
-    Duration fadeDuration = const Duration(milliseconds: 300),
     ColorFilter? colorFilter,
     WidgetBuilder? placeholderBuilder,
     BaseCacheManager? cacheManager,
@@ -47,7 +46,6 @@ class CachedNetworkSVGImage extends StatefulWidget {
         _semanticsLabel = semanticsLabel,
         _excludeFromSemantics = excludeFromSemantics,
         _theme = theme,
-        _fadeDuration = fadeDuration,
         _colorFilter = colorFilter,
         _placeholderBuilder = placeholderBuilder,
         _cacheManager = cacheManager ?? DefaultCacheManager(),
@@ -69,7 +67,6 @@ class CachedNetworkSVGImage extends StatefulWidget {
   final String? _semanticsLabel;
   final bool _excludeFromSemantics;
   final SvgTheme _theme;
-  final Duration _fadeDuration;
   final ColorFilter? _colorFilter;
   final WidgetBuilder? _placeholderBuilder;
   final BaseCacheManager _cacheManager;
@@ -105,27 +102,17 @@ class CachedNetworkSVGImage extends StatefulWidget {
   static String _generateKeyFromUrl(String url) => url.split('?').first;
 }
 
-class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
-    with SingleTickerProviderStateMixin {
+class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage> {
   bool _isLoading = false;
   bool _isError = false;
   File? _imageFile;
   late String _cacheKey;
-
-  late final AnimationController _controller;
-  late final Animation<double> _animation;
-  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
     _cacheKey = widget._cacheKey ??
         CachedNetworkSVGImage._generateKeyFromUrl(widget._url);
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget._fadeDuration,
-    );
-    _animation = Tween(begin: 0.0, end: 1.0).animate(_controller);
     _loadImage();
   }
 
@@ -146,9 +133,6 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
       _isLoading = false;
 
       _setState();
-
-      if (!mounted || _isDisposed) return;
-      _controller.forward();
     } catch (e) {
       log('CachedNetworkSVGImage: $e');
 
@@ -172,13 +156,6 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
   void _setState() => mounted ? setState(() {}) : null;
 
   @override
-  void dispose() {
-    _isDisposed = true;
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: widget._width,
@@ -192,10 +169,7 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
 
     if (_isError) return _buildErrorWidget();
 
-    return FadeTransition(
-      opacity: _animation,
-      child: _buildSVGImage(),
-    );
+    return _buildSVGImage();
   }
 
   Widget _buildPlaceholderWidget() =>

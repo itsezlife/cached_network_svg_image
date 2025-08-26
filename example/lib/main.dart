@@ -61,7 +61,6 @@ class _MyHomePageState extends State<MyHomePage> {
           errorWidget: const Icon(Icons.error, color: Colors.red),
           width: 250.0,
           height: 250.0,
-          fadeDuration: const Duration(milliseconds: 700),
         ),
       ),
       floatingActionButton: FloatingActionButton(
