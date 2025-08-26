@@ -114,6 +114,7 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
 
   late final AnimationController _controller;
   late final Animation<double> _animation;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -146,7 +147,7 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
 
       _setState();
 
-      if (!mounted) return;
+      if (!mounted || _isDisposed) return;
       _controller.forward();
     } catch (e) {
       log('CachedNetworkSVGImage: $e');
@@ -172,6 +173,7 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
 
   @override
   void dispose() {
+    _isDisposed = true;
     _controller.dispose();
     super.dispose();
   }
