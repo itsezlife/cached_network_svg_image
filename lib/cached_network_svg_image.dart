@@ -4,8 +4,8 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class CachedNetworkSVGImage extends StatefulWidget {
   CachedNetworkSVGImage(
@@ -21,8 +21,9 @@ class CachedNetworkSVGImage extends StatefulWidget {
     AlignmentGeometry alignment = Alignment.center,
     bool matchTextDirection = false,
     bool allowDrawingOutsideViewBox = false,
-    @deprecated Color? color,
-    @deprecated BlendMode colorBlendMode = BlendMode.srcIn,
+    @Deprecated('Use colorFilter instead.') Color? color,
+    @Deprecated('Use colorFilter instead.')
+    BlendMode colorBlendMode = BlendMode.srcIn,
     String? semanticsLabel,
     bool excludeFromSemantics = false,
     SvgTheme theme = const SvgTheme(),
@@ -145,6 +146,7 @@ class _CachedNetworkSVGImageState extends State<CachedNetworkSVGImage>
 
       _setState();
 
+      if (!mounted) return;
       _controller.forward();
     } catch (e) {
       log('CachedNetworkSVGImage: $e');
